@@ -27,50 +27,81 @@ Sub getTimes()
 End Sub
 
 Sub getWorkersNames()
-'This sub adds the default worker abbreviations to our list box
-    Application.ThisWorkbook.Worksheets("Projects").Activate
-    Dim namearray(100) As String
-    Dim counter As Integer
-    Dim countermax As Integer
-    counter = 1
-    countermax = 0
-    While Application.ThisWorkbook.Worksheets("Projects").Range(Cells(counter, 5), Cells(counter, 5)).Value <> ""
-        countermax = countermax + 1
-        counter = counter + 1
-    Wend
-    counter = 2
-    While counter <= countermax
-        namearray(counter - 2) = Application.ThisWorkbook.Worksheets("Projects").Range(Cells(counter, 5), Cells(counter, 5)).Value
+        MyPath = ActiveWorkbook.Path & "\Zeiterfassung" & "\pecoDB.accdb"
+    
+    If Dir(MyPath) <> "" Then
+        Dim cmd As New ADODB.Command
+        Dim AccessConnect As String
+        Dim Rs1 As New Recordset
+        Dim sqlstring As String
+  
+        Set cn = New ADODB.Connection
+        sqlstring = "SELECT * FROM Mitarbeiter;"
         
-        With lb_workers
-            .AddItem namearray(counter - 2)
-        End With
-        counter = counter + 1
-    Wend
+        'AccessConnect = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Anzumana\Dropbox\peco\pecoDB.accdb;Jet OLEDB:Database Password=test;"
+        AccessConnect = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & MyPath & ";Jet OLEDB:Database Password=test;"
+        ' Note! Reports say that a database encrypted using Access 2010 - 2013 default encryption scheme does not work with this connection string.
+        ' In Access; try options and choose 2007 encryption method instead.
+        ' That should make it work. We do not know of any other solution. Please get in touch if other solutions is available!
+        cn.ConnectionString = AccessConnect
+    
+        cn.Open
+    End If
+    
+    Set Rs1 = cn.Execute(sqlstring)
+ 
+ 
+ 
+   
+    While Not Rs1.EOF
+        lb_workers.AddItem Rs1.Fields(1).Value
+      
+        Rs1.MoveNext
+     
+   Wend
+   Rs1.Close
+   
+    cn.Close
+   
+
+    
+
+
 End Sub
 
 Sub getProjectNames()
-'This sub add the default projects to our list box
-    Application.ThisWorkbook.Worksheets("Projects").Activate
-    Dim namearray(100) As String
-    Dim counter As Integer
-    Dim countermax As Integer
-    counter = 1
-    countermax = 0
+        MyPath = ActiveWorkbook.Path & "\Zeiterfassung" & "\pecoDB.accdb"
+    
+    If Dir(MyPath) <> "" Then
+        Dim cmd As New ADODB.Command
+        Dim AccessConnect As String
+        Dim Rs1 As New Recordset
+        Dim sqlstring As String
   
-    While Application.ThisWorkbook.Worksheets("Projects").Range(Cells(counter, 1), Cells(counter, 1)).Value <> ""
-        countermax = countermax + 1
-        counter = counter + 1
-    Wend
-    counter = 2
-    While counter <= countermax
-        namearray(counter - 2) = Application.ThisWorkbook.Worksheets("Projects").Range(Cells(counter, 1), Cells(counter, 1)).Value
+        Set cn = New ADODB.Connection
+        sqlstring = "SELECT * FROM Projekte  where active = true;"
         
-        With lb_projects
-            .AddItem namearray(counter - 2)
-        End With
-        counter = counter + 1
-    Wend
+        'AccessConnect = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Anzumana\Dropbox\peco\pecoDB.accdb;Jet OLEDB:Database Password=test;"
+        AccessConnect = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & MyPath & ";Jet OLEDB:Database Password=test;"
+        ' Note! Reports say that a database encrypted using Access 2010 - 2013 default encryption scheme does not work with this connection string.
+        ' In Access; try options and choose 2007 encryption method instead.
+        ' That should make it work. We do not know of any other solution. Please get in touch if other solutions is available!
+        cn.ConnectionString = AccessConnect
+    
+        cn.Open
+    End If
+    
+    Set Rs1 = cn.Execute(sqlstring)
+   
+   While Not Rs1.EOF
+        lb_projects.AddItem Rs1.Fields(1).Value
+      Rs1.MoveNext
+    
+   Wend
+
+    cn.Close
+    
+    
 End Sub
 Public Sub cmd2_Click()
 ' the fertig button on the user form
@@ -261,7 +292,7 @@ Sub cmd1_click()
     
     If a = True Then
         CommandButton1_Click
-        MsgBox " Daten wurden hinzugefügt"
+        MsgBox " Daten wurden hinzugefŸgt"
     Else
         
     End If
@@ -274,21 +305,21 @@ Function checkuserform() As Boolean
   
     Debug.Print lb_type.Value, lb_projects; lb_workers
     If lb_type.Value = "" Then
-        MsgBox "Es wurde keine Tätigkeitsart angegeben"
+        MsgBox "Es wurde keine T_tigkeitsart angegeben"
         checkuserform = False
         Exit Function
   
     End If
     
     If IsNull(lb_projects) Then
-        MsgBox "Es wurde kein Projekt ausgewählt"
+        MsgBox "Es wurde kein Projekt ausgew_hlt"
         checkuserform = False
         Exit Function
     End If
     
     
     If IsNull(lb_workers) Then
-        MsgBox " Es wurde keine Mitarbeiter ausgewählt "
+        MsgBox " Es wurde keine Mitarbeiter ausgew_hlt "
         checkuserform = False
         Exit Function
         
@@ -344,7 +375,7 @@ Function checkuserform() As Boolean
         Exit Function
     End If
     If Not IsDate(tb_date.Value) Then
-        MsgBox "Überprüfe das Datumformat"
+        MsgBox "†berprŸfe das Datumformat"
         checkuserform = False
         Exit Function
     End If
@@ -445,43 +476,81 @@ Function weekdaycalc() As String
     
 End Function
 
+Private Sub MultiPage1_Change()
 
+End Sub
 
 Private Sub UserForm_Initialize()
+    checkDBConnection
     getProjectNames
     getWorkersNames
     getTimes
     getTypes
     getDate
 End Sub
+Sub checkDBConnection()
+Dim MyPath As String
+
+    MyPath = ActiveWorkbook.Path & "\Zeiterfassung" & "\pecoDB.accdb"
+    If Dir(MyPath) <> "" Then
+        Dim cmd As New ADODB.Command
+        Dim AccessConnect As String
+        Dim Rs1 As New Recordset
+        Dim sqlstring As String
+  
+        Set cn = New ADODB.Connection
+        sqlstring = "SELECT * FROM WorkTypes;"
+        
+        'AccessConnect = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Anzumana\Dropbox\peco\pecoDB.accdb;Jet OLEDB:Database Password=test;"
+        AccessConnect = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & MyPath & ";Jet OLEDB:Database Password=test;"
+        ' Note! Reports say that a database encrypted using Access 2010 - 2013 default encryption scheme does not work with this connection string.
+        ' In Access; try options and choose 2007 encryption method instead.
+        ' That should make it work. We do not know of any other solution. Please get in touch if other solutions is available!
+        cn.ConnectionString = AccessConnect
+    
+        cn.Open
+        cn.Close
+    Else
+        MsgBox " Leider konnte die Datenbank nicht gefunden werdeen "
+    End If
+    
+End Sub
 Sub getDate()
     tb_date.Value = Date
     
 End Sub
 Sub getTypes()
-' sets the default types of work for our userform
-    Application.ThisWorkbook.Worksheets("Projects").Activate
-    Dim namearray(100) As String
-    Dim counter As Integer
-    Dim countermax As Integer
-    counter = 1
-    countermax = 0
+      MyPath = ActiveWorkbook.Path & "\Zeiterfassung" & "\pecoDB.accdb"
+   
+    If Dir(MyPath) <> "" Then
+        Dim cmd As New ADODB.Command
+        Dim AccessConnect As String
+        Dim Rs1 As New Recordset
+        Dim sqlstring As String
   
-    
-    While Application.ThisWorkbook.Worksheets("Projects").Range(Cells(counter, 8), Cells(counter, 8)).Value <> ""
-        countermax = countermax + 1
-        counter = counter + 1
-    Wend
-    
-    counter = 2
-    While counter <= countermax
-        namearray(counter - 2) = Application.ThisWorkbook.Worksheets("Projects").Range(Cells(counter, 8), Cells(counter, 8)).Value
+        Set cn = New ADODB.Connection
+        sqlstring = "SELECT * FROM WorkTypes;"
         
-        With lb_type
-            .AddItem namearray(counter - 2)
-        End With
-        counter = counter + 1
-    Wend
+        'AccessConnect = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Anzumana\Dropbox\peco\pecoDB.accdb;Jet OLEDB:Database Password=test;"
+        AccessConnect = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & MyPath & ";Jet OLEDB:Database Password=test;"
+        ' Note! Reports say that a database encrypted using Access 2010 - 2013 default encryption scheme does not work with this connection string.
+        ' In Access; try options and choose 2007 encryption method instead.
+        ' That should make it work. We do not know of any other solution. Please get in touch if other solutions is available!
+        cn.ConnectionString = AccessConnect
+    
+        cn.Open
+    End If
+    
+    Set Rs1 = cn.Execute(sqlstring)
+   
+   While Not Rs1.EOF
+        lb_type.AddItem Rs1.Fields(1).Value
+      Rs1.MoveNext
+    
+   Wend
+    
+    cn.Close
+    
 End Sub
 Function lastrow() As Integer
     Dim counter, countermax As Integer
