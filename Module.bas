@@ -61,6 +61,19 @@ Sub createReportSheet()
 End Sub
 
 '---------------------------------------------------------------------------------------
+' Procedure : findDB
+' Author    : Anzumana
+' Date      : 2/19/2014
+' Purpose   :
+' Inputs    :
+' Returns   :
+'---------------------------------------------------------------------------------------
+
+Sub findDB()
+
+End Sub
+
+'---------------------------------------------------------------------------------------
 ' Procedure : checkDBConnection
 ' Author    : Anzumana
 ' Date      : 2/19/2014
@@ -83,19 +96,6 @@ Function checkDBConnection() As Boolean
     Debug.Print dbPath
     
 End Function
-
-'---------------------------------------------------------------------------------------
-' Procedure : findDB
-' Author    : Anzumana
-' Date      : 2/19/2014
-' Purpose   :
-' Inputs    :
-' Returns   :
-'---------------------------------------------------------------------------------------
-
-Sub findDB()
-
-End Sub
 
 '---------------------------------------------------------------------------------------
 ' Procedure : checkTimesSheet
@@ -162,14 +162,78 @@ Function checkTimesSheet() As Boolean
             checkTimesSheet = False
         End If
         
-        ' check logic kw has to be the correct date same for the oither stuff
-        ' kw is ok
-        ' von < bis
+        If checkVon(row.Cells(1, 3).Text, row) = True And checkBis(row.Cells(1, 4).Text, row) = True And checkVonBis(row.Cells(1, 3).Text, row.Cells(1, 4).Text) = False Then
+            row.Cells(1, 3).Interior.ColorIndex = 46
+            row.Cells(1, 4).Interior.ColorIndex = 46
+            checkTimesSheet = False
+        End If
+        
+       
+        If checkKW(row.Cells(1, 10).Value, row) = True And checkDatum(row.Cells(1, 1).Value, row) = True And checkKWCalculation(row.Cells(1, 1).Value, row.Cells(1, 10).Value) = False Then
+            row.Cells(1, 10).Interior.ColorIndex = 46
+            row.Cells(1, 1).Interior.ColorIndex = 46
+            checkTimesSheet = False
+        End If
         
         
     Next
     
 
+End Function
+'---------------------------------------------------------------------------------------
+' Procedure : checkKWCalculation
+' Author    : Anzumana
+' Date      : 2/20/2014
+' Purpose   :
+' Inputs    :
+' Returns   : Variant
+'---------------------------------------------------------------------------------------
+
+Function checkKWCalculation(enteredDate As Variant, kw As Variant)
+    On Error GoTo checkKWCalculation_Error
+    Dim i As Integer
+    Debug.Print enteredDate
+    Debug.Print kw
+    
+    Dim myRegExp As RegExp
+    Dim myMatches As MatchCollection
+    Dim myMatch As Match
+    Set myRegExp = New RegExp
+    Dim myDate As Date
+    myRegExp.Pattern = "^(\d\d)\.(\d\d)\.(\d\d\d\d)$"
+    Dim myString As String
+   
+    
+    Set myMatches = myRegExp.Execute(enteredDate)
+    
+    For Each myMatch In myMatches
+        
+        
+        myString = myMatch.SubMatches(1) + "/" + myMatch.SubMatches(0) + "/" + myMatch.SubMatches(2)
+        Debug.Print myString
+        myDate = CDate(myString)
+        i = DatePart("ww", myDate)
+                
+                
+        
+    Next
+   
+    If (i <> kw) Then
+        checkKWCalculation = False
+    Else
+        checkKWCalculation = True
+    End If
+
+   
+    Exit Function
+
+checkKWCalculation_Error:
+    checkKWCalculation = False
+
+    Debug.Print "Error " & Err.Number & " (" & Err.Description & ") in procedure checkKWCalculation of Module Module1"
+    Exit Function
+    
+    
 End Function
 
 '---------------------------------------------------------------------------------------
@@ -387,6 +451,41 @@ Function checkKW(v As Variant, r As range) As Boolean
     Else
          checkKW = False
     End If
+    
+End Function
+
+'---------------------------------------------------------------------------------------
+' Procedure :   checkVonBis
+' Author    :   Anzumana
+' Date      :   2/20/2014
+' Purpose   :   logic timefrom has to be earlier then timeto. if conversion error function
+'               return false also
+' Inputs    :   timeto and timefrom
+' Returns   :   Boolean
+'---------------------------------------------------------------------------------------
+
+Function checkVonBis(timefrom As Variant, timeto As Variant) As Boolean
+    Dim c As Variant
+    
+    On Error GoTo checkVonBis_Error
+
+    c = TimeValue(timeto) - TimeValue(timefrom)
+
+    If c <= 0 Then
+        checkVonBis = False
+    Else
+         checkVonBis = True
+    End If
+
+   
+    Exit Function
+
+checkVonBis_Error:
+    checkVonBis = False
+
+    Debug.Print "Error " & Err.Number & " (" & Err.Description & ") in procedure checkVonBis of Module Module1"
+    Exit Function
+    
     
 End Function
 
