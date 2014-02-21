@@ -12,7 +12,7 @@ Public dbPath As String
 Dim listProjects(50) As String
 Dim listEmployees(50) As String
 Dim listDesciptions(50) As String
-Dim versionNumber As String
+Public versionNumber As String
 
 
 '---------------------------------------------------------------------------------------
@@ -49,13 +49,13 @@ Sub createReportSheet()
     Dim ws As Worksheet
     
     For Each ws In Sheets
-        If (ws.Name = "Report") Then
+        If (ws.name = "Report") Then
             ws.Delete
         End If
     Next
   
     
-    Sheets.Add(Type:=xlWorksheet).Name = "Report"
+    Sheets.Add(Type:=xlWorksheet).name = "Report"
     
     
    Application.DisplayAlerts = True
@@ -714,7 +714,6 @@ Function checkVersionNumber(versionNumber As String) As Boolean
                 End If
             End If
             
-            count = count + 1
           
             Rs1.MoveNext
         
@@ -725,8 +724,53 @@ Function checkVersionNumber(versionNumber As String) As Boolean
     Else
         checkVersionNumber = False
     End If
-    
 
 End Function
 
+'---------------------------------------------------------------------------------------
+' Procedure :   checkMitarbeiterKeyPhrase
+' Author    :   Anzumana
+' Date      :   2/21/2014
+' Purpose   :   checks if the KeyPhrase is the correct one for the employee
+' Inputs    :   keyphrase and shorthand of employee
+' Returns   :   Variant
+'---------------------------------------------------------------------------------------
 
+Function checkMitarbeiterKeyPhrase(key As String, shorthand As String) As Boolean
+        If key = getKeyPhrase(shorthand) Then
+            checkMitarbeiterKeyPhrase = True
+            Exit Function
+        End If
+End Function
+Function getKeyPhrase(name As String) As String
+    If (checkDBConnection) Then
+        Dim cmd As New ADODB.Command
+        Dim AccessConnect As String
+        Dim Rs1 As New Recordset
+        Dim sqlstring As String
+      
+        Set cn = New ADODB.Connection
+            
+        AccessConnect = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & dbPath & ";Jet OLEDB:Database Password=test;"
+        ' Note! Reports say that a database encrypted using Access 2010 - 2013 default encryption scheme does not work with this connection string.
+        ' In Access; try options and choose 2007 encryption method instead.
+        ' That should make it work. We do not know of any other solution. Please get in touch if other solutions is available!
+        cn.ConnectionString = AccessConnect
+        
+        cn.Open
+        Rs1.Open "select * from Mitarbeiter", cn, adOpenKeyset, adLockOptimistic
+        While Not Rs1.EOF
+            If (name = Rs1.Fields("shorthand").Value) Then
+                getKeyPhrase = Rs1.Fields("keyPhrase").Value
+                Exit Function
+            End If
+            Rs1.MoveNext
+        
+        Wend
+        
+    Else
+        getKeyPhrase = ""
+        Exit Function
+    End If
+    
+End Function
