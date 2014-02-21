@@ -95,7 +95,7 @@ Function checkDBConnection() As Boolean
        
         checkDBConnection = False
     End If
-    Debug.Print dbPath
+    
     
 End Function
 
