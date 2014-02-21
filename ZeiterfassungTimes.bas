@@ -1,4 +1,3 @@
-
 '---------------------------------------------------------------------------------------
 ' Procedure : Update_click
 ' Author    : Anzumana
@@ -37,7 +36,9 @@ End Sub
 ' Returns   :
 '---------------------------------------------------------------------------------------
   Sub CommitToDatabase()
-     
+    versionNumber = "1.1"
+    Module1.checkVersionNumber (versionNumber)
+    
     If Module1.checkDBConnection = True And Module1.checkTimesSheet = True Then 'check if date of commited values are ok
     
         Dim cmd As New ADODB.Command
@@ -70,8 +71,8 @@ End Sub
     fieldsArray(2) = "Von"
     fieldsArray(3) = "Bis"
     fieldsArray(4) = "Projekt"
-    fieldsArray(5) = "Tätigkeitsart"
-    fieldsArray(6) = "Tätigkeitsbeschreibung"
+    fieldsArray(5) = "T?tigkeitsart"
+    fieldsArray(6) = "T?tigkeitsbeschreibung"
     fieldsArray(7) = "Mitarbeiter"
     fieldsArray(8) = "KW"
     
@@ -150,4 +151,5 @@ End Sub
         cn.Close
     End If
   End Sub
+
 
