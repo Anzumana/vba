@@ -12,6 +12,8 @@ Public dbPath As String
 Dim listProjects(50) As String
 Dim listEmployees(50) As String
 Dim listDesciptions(50) As String
+Dim versionNumber As String
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : createReport
@@ -674,5 +676,57 @@ Sub getTaetigkeitsarten()
         cn.Close
     End If
 End Sub
+
+'---------------------------------------------------------------------------------------
+' Procedure :   checkVersionNumber
+' Author    :   Anzumana
+' Date      :   2/21/2014
+' Purpose   :   to check if the version of the Excel sheet is allowed to commit to our
+'               database
+' Inputs    :   VersionsNumber String
+' Returns   :   Boolean
+'---------------------------------------------------------------------------------------
+
+Function checkVersionNumber(versionNumber As String) As Boolean
+    If (checkDBConnection) Then
+        Dim cmd As New ADODB.Command
+        Dim AccessConnect As String
+        Dim Rs1 As New Recordset
+        Dim sqlstring As String
+      
+        Set cn = New ADODB.Connection
+            
+        AccessConnect = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & dbPath & ";Jet OLEDB:Database Password=test;"
+        ' Note! Reports say that a database encrypted using Access 2010 - 2013 default encryption scheme does not work with this connection string.
+        ' In Access; try options and choose 2007 encryption method instead.
+        ' That should make it work. We do not know of any other solution. Please get in touch if other solutions is available!
+        cn.ConnectionString = AccessConnect
+        
+        cn.Open
+        Rs1.Open "select * from VersionZeiterfassung", cn, adOpenKeyset, adLockOptimistic
+         While Not Rs1.EOF
+            If (versionNumber = Rs1.Fields("versionNumber").Value And Rs1.Fields("acceptCommit").Value = True) Then
+                checkVersionNumber = True
+            Else
+                If (versionNumber = Rs1.Fields("versionNumber").Value And Rs1.Fields("acceptCommit").Value = False) Then
+                    checkVersionNumber = False
+                    Exit Function
+                End If
+            End If
+            
+            count = count + 1
+          
+            Rs1.MoveNext
+        
+        Wend
+        
+        cn.Close
+     
+    Else
+        checkVersionNumber = False
+    End If
+    
+
+End Function
 
 
