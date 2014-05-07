@@ -1,7 +1,10 @@
 
-Private Sub MultiPage1_Change()
+
+Private Sub lb_workers_Click()
 
 End Sub
+
+
 
 '---------------------------------------------------------------------------------------
 ' Procedure : UserForm_Initialize
@@ -13,6 +16,7 @@ End Sub
 '---------------------------------------------------------------------------------------
 
 Private Sub UserForm_Initialize()
+    versionNumber = "1.1"
     checkDBConnection
     getProjectNames
     getWorkersNames
@@ -151,18 +155,13 @@ Sub getWorkersNames()
    
     While Not Rs1.EOF
         lb_workers.AddItem Rs1.Fields(1).Value
-      
+       
         Rs1.MoveNext
      
-   Wend
-   Rs1.Close
+    Wend
+    Rs1.Close
    
     cn.Close
-   
-
-    
-
-
 End Sub
 
 Sub getDate()
@@ -407,7 +406,7 @@ Sub cmd1_click()
     
     If a = True Then
         CommandButton1_Click
-        MsgBox " Daten wurden hinzugefügt"
+        MsgBox " Daten wurden hinzugef?gt"
     Else
         
     End If
@@ -490,21 +489,21 @@ Function checkuserform() As Boolean
   
     Debug.Print lb_type.Value, lb_projects; lb_workers
     If lb_type.Value = "" Then
-        MsgBox "Es wurde keine Tätigkeitsart angegeben"
+        MsgBox "Es wurde keine T?tigkeitsart angegeben"
         checkuserform = False
         Exit Function
   
     End If
     
     If IsNull(lb_projects) Then
-        MsgBox "Es wurde kein Projekt ausgewählt"
+        MsgBox "Es wurde kein Projekt ausgew?hlt"
         checkuserform = False
         Exit Function
     End If
     
     
     If IsNull(lb_workers) Then
-        MsgBox " Es wurde keine Mitarbeiter ausgewählt "
+        MsgBox " Es wurde keine Mitarbeiter ausgew?hlt "
         checkuserform = False
         Exit Function
         
@@ -560,7 +559,7 @@ Function checkuserform() As Boolean
         Exit Function
     End If
     If Not IsDate(tb_date.Value) Then
-        MsgBox "Überprüfe das Datumformat"
+        MsgBox "√úberpr√ºfe das Datumformat"
         checkuserform = False
         Exit Function
     End If
@@ -642,5 +641,6 @@ Function lastrow() As Integer
     Wend
     lastrow = countermax
 End Function
+
 
 

@@ -1,3 +1,7 @@
+Sub openCommit()
+    UserForm2.Show
+    
+End Sub
 
 '---------------------------------------------------------------------------------------
 ' Procedure : Update_click
@@ -36,9 +40,9 @@ End Sub
 ' Inputs    :
 ' Returns   :
 '---------------------------------------------------------------------------------------
-  Sub CommitToDatabase()
-     
-    If Module1.checkDBConnection = True And Module1.checkTimesSheet = True Then 'check if date of commited values are ok
+Sub CommitToDatabase()
+    versionNumber = "1.1"
+    If Module1.checkDBConnection = True And Module1.checkTimesSheet = True And Module1.checkVersionNumber(versionNumber) = True Then  'check if date of commited values are ok
     
         Dim cmd As New ADODB.Command
         Dim AccessConnect As String
@@ -62,29 +66,20 @@ End Sub
     
     Rs1.Open "select * from Zeiterfassung", cn, adOpenKeyset, adLockOptimistic
     
-    Dim fieldsArray(8) As Variant
-    Dim values(8) As Variant
+    Dim fieldsArray(10) As Variant
+    Dim values(10) As Variant
     
     fieldsArray(0) = "Datum"
     fieldsArray(1) = "Wochentag"
     fieldsArray(2) = "Von"
     fieldsArray(3) = "Bis"
     fieldsArray(4) = "Projekt"
-    fieldsArray(5) = "Tätigkeitsart"
-    fieldsArray(6) = "Tätigkeitsbeschreibung"
+    fieldsArray(5) = "TÃ¤tigkeitsart"
+    fieldsArray(6) = "TÃ¤tigkeitsbeschreibung"
     fieldsArray(7) = "Mitarbeiter"
     fieldsArray(8) = "KW"
-    
-    values(0) = #1/1/1900#
-    values(1) = "Mittwoch"
-    values(2) = 1 / 10 / 2014
-    values(3) = 1 / 1 / 2011
-    values(4) = "Dienstag"
-    values(5) = "Dienstag"
-    values(6) = "Dienstag"
-    values(7) = "Dienstag"
-    values(8) = "Dienstag"
-    
+    fieldsArray(9) = "CommitedBy"
+    fieldsArray(10) = "CommitDate"
     
     Dim row As range
     Dim myRegExp As RegExp
@@ -133,6 +128,9 @@ End Sub
         values(6) = row.Columns(7).Value     'Taetigkeitsbeschreibung
         values(7) = row.Columns(9).Value     ' Mitarbeiter
         values(8) = row.Columns(10).Value    'KW
+        values(9) = "ANzumana"
+        values(10) = Date
+        
         Rs1.AddNew fieldsArray, values
         Rs1.Update
     Next
@@ -149,5 +147,6 @@ End Sub
     
         cn.Close
     End If
-  End Sub
+End Sub
+
 
