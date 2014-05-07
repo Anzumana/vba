@@ -6,6 +6,13 @@ End Sub
 
 
 
+
+
+
+Private Sub MultiPage1_Exit(ByVal Cancel As MSForms.ReturnBoolean)
+MsgBox "test"
+End Sub
+
 '---------------------------------------------------------------------------------------
 ' Procedure : UserForm_Initialize
 ' Author    : Anzumana
@@ -641,6 +648,7 @@ Function lastrow() As Integer
     Wend
     lastrow = countermax
 End Function
+
 
 
 

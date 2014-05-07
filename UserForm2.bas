@@ -6,7 +6,7 @@ If checkMitarbeiterKeyPhrase(tb_keyPhrase.Value, lb_shorthands.Value) Then
     UserForm2.Hide
     
 Else
-MsgBox "Sorry wrong Pasphrase or something"
+MsgBox "Sorry but thats the wrong  Passphrase for the selected User"
 End If
 
 End Sub
@@ -45,3 +45,4 @@ Private Sub UserForm_Initialize()
     
     End If
 End Sub
+

@@ -102,7 +102,7 @@ Sub CommitToDatabase()
         
         'Debug.Print "#" + myMatch.SubMatches(1) + "/" + myMatch.SubMatches(0) + "/" + myMatch.SubMatches(2) + "#"
         'If myRegExp.test(row.Columns(1).Value) Then
-        myString = myMatch.SubMatches(1) + "/" + myMatch.SubMatches(0) + "/" + myMatch.SubMatches(2)
+        myString = myMatch.SubMatches(0) + "/" + myMatch.SubMatches(1) + "/" + myMatch.SubMatches(2)
         Debug.Print myString
         myDate = CDate(myString)
         values(0) = myDate
@@ -128,7 +128,7 @@ Sub CommitToDatabase()
         values(6) = row.Columns(7).Value     'Taetigkeitsbeschreibung
         values(7) = row.Columns(9).Value     ' Mitarbeiter
         values(8) = row.Columns(10).Value    'KW
-        values(9) = "ANzumana"
+        values(9) = "AAAAAAA"
         values(10) = Date
         
         Rs1.AddNew fieldsArray, values
@@ -148,5 +148,6 @@ Sub CommitToDatabase()
         cn.Close
     End If
 End Sub
+
 
 

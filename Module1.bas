@@ -94,6 +94,7 @@ Function checkDBConnection() As Boolean
     Else
        
         checkDBConnection = False
+        MsgBox "Error Function checkDBConnection"
     End If
     
     
@@ -179,7 +180,10 @@ Function checkTimesSheet() As Boolean
         
         
     Next
-    
+    If checkTimesSheet = False Then
+        MsgBox "Sorry formating is wrong "
+    End If
+
 
 End Function
 '---------------------------------------------------------------------------------------
@@ -211,11 +215,14 @@ Function checkKWCalculation(enteredDate As Variant, kw As Variant)
     For Each myMatch In myMatches
         
         
-        myString = myMatch.SubMatches(1) + "/" + myMatch.SubMatches(0) + "/" + myMatch.SubMatches(2)
+        myString = myMatch.SubMatches(0) + "/" + myMatch.SubMatches(1) + "/" + myMatch.SubMatches(2)
+        Debug.Print "my Dates"
         Debug.Print myString
+        Debug.Print "kw " & kw
         myDate = CDate(myString)
         i = DatePart("ww", myDate)
-                
+        Debug.Print i
+        
                 
         
     Next
@@ -774,3 +781,4 @@ Function getKeyPhrase(name As String) As String
     End If
     
 End Function
+
